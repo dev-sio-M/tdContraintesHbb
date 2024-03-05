@@ -1,0 +1,168 @@
+CREATE TABLE Agence(
+   num_agence VARCHAR(50),
+   nom_agence VARCHAR(50) NOT NULL,
+   adresse_agence VARCHAR(50) NOT NULL,
+   tel_agence INT,
+   PRIMARY KEY(num_agence)
+);
+
+CREATE TABLE Dates(
+   dates VARCHAR(50),
+   PRIMARY KEY(dates)
+);
+
+CREATE TABLE Type_Compte(
+   id_type VARCHAR(50),
+   designation VARCHAR(50) NOT NULL,
+   PRIMARY KEY(id_type)
+);
+
+CREATE TABLE VirementProgrammes(
+   numVirement VARCHAR(50),
+   designation VARCHAR(50) NOT NULL,
+   montant INT,
+   numCompteCredite INT,
+   numCompteDebite INT,
+   dateExecution DATE,
+   PRIMARY KEY(numVirement)
+);
+
+CREATE TABLE Conseiller(
+   num_conseiller VARCHAR(50),
+   nom_conseiller VARCHAR(50) NOT NULL,
+   prenom_conseiller VARCHAR(50) NOT NULL,
+   date_embauche DATE,
+   PRIMARY KEY(num_conseiller)
+);
+
+CREATE TABLE cartes_bancaires(
+   numero VARCHAR(50),
+   code_securite VARCHAR(50) NOT NULL,
+   date_delivrance VARCHAR(50) NOT NULL,
+   numero_dernier_cheque VARCHAR(50) NOT NULL,
+   active LOGICAL NOT NULL,
+   PRIMARY KEY(numero)
+);
+
+CREATE TABLE chequier(
+   numero VARCHAR(50),
+   date_delivrance VARCHAR(50) NOT NULL,
+   numero_premier_cheque VARCHAR(50) NOT NULL,
+   numero_dernier_cheque VARCHAR(50) NOT NULL,
+   active LOGICAL NOT NULL,
+   detruit LOGICAL NOT NULL,
+   PRIMARY KEY(numero)
+);
+
+CREATE TABLE cheques(
+   numero VARCHAR(50),
+   date_emission VARCHAR(50) NOT NULL,
+   PRIMARY KEY(numero)
+);
+
+CREATE TABLE Client(
+   num_client VARCHAR(50),
+   nom_client VARCHAR(50) NOT NULL,
+   prenom_client VARCHAR(50) NOT NULL,
+   adresse_client VARCHAR(50) NOT NULL,
+   identifiant_internet INT NOT NULL,
+   mdp_internet VARCHAR(50) NOT NULL,
+   numero VARCHAR(50) NOT NULL,
+   PRIMARY KEY(num_client),
+   UNIQUE(numero),
+   FOREIGN KEY(numero) REFERENCES cartes_bancaires(numero)
+);
+
+CREATE TABLE Compte(
+   num_compte VARCHAR(50),
+   solde INT NOT NULL,
+   numero VARCHAR(50) NOT NULL,
+   numero_1 VARCHAR(50) NOT NULL,
+   id_type VARCHAR(50) NOT NULL,
+   dates VARCHAR(50),
+   dates_1 VARCHAR(50) NOT NULL,
+   PRIMARY KEY(num_compte),
+   UNIQUE(numero),
+   UNIQUE(numero_1),
+   FOREIGN KEY(numero) REFERENCES chequier(numero),
+   FOREIGN KEY(numero_1) REFERENCES cartes_bancaires(numero),
+   FOREIGN KEY(id_type) REFERENCES Type_Compte(id_type),
+   FOREIGN KEY(dates) REFERENCES Dates(dates),
+   FOREIGN KEY(dates_1) REFERENCES Dates(dates)
+);
+
+CREATE TABLE Operation(
+   id_operation VARCHAR(50),
+   designation VARCHAR(50) NOT NULL,
+   type_operation VARCHAR(50) NOT NULL,
+   montant INT NOT NULL,
+   dates VARCHAR(50) NOT NULL,
+   num_compte VARCHAR(50),
+   num_compte_1 VARCHAR(50) NOT NULL,
+   PRIMARY KEY(id_operation),
+   UNIQUE(montant),
+   FOREIGN KEY(dates) REFERENCES Dates(dates),
+   FOREIGN KEY(num_compte) REFERENCES Compte(num_compte),
+   FOREIGN KEY(num_compte_1) REFERENCES Compte(num_compte)
+);
+
+CREATE TABLE dependre(
+   num_agence VARCHAR(50),
+   num_client VARCHAR(50),
+   dates VARCHAR(50),
+   PRIMARY KEY(num_agence, num_client, dates),
+   FOREIGN KEY(num_agence) REFERENCES Agence(num_agence),
+   FOREIGN KEY(num_client) REFERENCES Client(num_client),
+   FOREIGN KEY(dates) REFERENCES Dates(dates)
+);
+
+CREATE TABLE posseder(
+   num_client VARCHAR(50),
+   num_compte VARCHAR(50),
+   PRIMARY KEY(num_client, num_compte),
+   FOREIGN KEY(num_client) REFERENCES Client(num_client),
+   FOREIGN KEY(num_compte) REFERENCES Compte(num_compte)
+);
+
+CREATE TABLE remunerer(
+   dates VARCHAR(50),
+   dates_1 VARCHAR(50),
+   id_type VARCHAR(50),
+   taux_interet VARCHAR(50),
+   PRIMARY KEY(dates, dates_1, id_type),
+   FOREIGN KEY(dates) REFERENCES Dates(dates),
+   FOREIGN KEY(dates_1) REFERENCES Dates(dates),
+   FOREIGN KEY(id_type) REFERENCES Type_Compte(id_type)
+);
+
+CREATE TABLE effectuer(
+   num_compte VARCHAR(50),
+   numVirement VARCHAR(50),
+   PRIMARY KEY(num_compte, numVirement),
+   FOREIGN KEY(num_compte) REFERENCES Compte(num_compte),
+   FOREIGN KEY(numVirement) REFERENCES VirementProgrammes(numVirement)
+);
+
+CREATE TABLE Appeler(
+   num_client VARCHAR(50),
+   num_conseiller VARCHAR(50),
+   PRIMARY KEY(num_client, num_conseiller),
+   FOREIGN KEY(num_client) REFERENCES Client(num_client),
+   FOREIGN KEY(num_conseiller) REFERENCES Conseiller(num_conseiller)
+);
+
+CREATE TABLE rattacher(
+   num_compte VARCHAR(50),
+   numero VARCHAR(50),
+   PRIMARY KEY(num_compte, numero),
+   FOREIGN KEY(num_compte) REFERENCES Compte(num_compte),
+   FOREIGN KEY(numero) REFERENCES cheques(numero)
+);
+
+CREATE TABLE composer(
+   numero VARCHAR(50),
+   numero_1 VARCHAR(50),
+   PRIMARY KEY(numero, numero_1),
+   FOREIGN KEY(numero) REFERENCES chequier(numero),
+   FOREIGN KEY(numero_1) REFERENCES cheques(numero)
+);
