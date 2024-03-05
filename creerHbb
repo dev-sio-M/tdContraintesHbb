@@ -128,7 +128,7 @@ CREATE TABLE remunerer(
    dates VARCHAR(50),
    dates_1 VARCHAR(50),
    id_type VARCHAR(50),
-   taux_interet VARCHAR(50),
+   __________taux_interet VARCHAR(50),
    PRIMARY KEY(dates, dates_1, id_type),
    FOREIGN KEY(dates) REFERENCES Dates(dates),
    FOREIGN KEY(dates_1) REFERENCES Dates(dates),
@@ -149,14 +149,6 @@ CREATE TABLE Appeler(
    PRIMARY KEY(num_client, num_conseiller),
    FOREIGN KEY(num_client) REFERENCES Client(num_client),
    FOREIGN KEY(num_conseiller) REFERENCES Conseiller(num_conseiller)
-);
-
-CREATE TABLE rattacher(
-   num_compte VARCHAR(50),
-   numero VARCHAR(50),
-   PRIMARY KEY(num_compte, numero),
-   FOREIGN KEY(num_compte) REFERENCES Compte(num_compte),
-   FOREIGN KEY(numero) REFERENCES cheques(numero)
 );
 
 CREATE TABLE composer(
